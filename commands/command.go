@@ -114,3 +114,52 @@ func cmdBuilderWithInit(parent *Command, cr CmdRunner, cliText, shortdesc string
 	return c
 
 }
+
+// CmdDetector builds a new command.
+func CmdDetector(parent *Command, cr CmdRunner, cliText, shortdesc string, longdesc string, out io.Writer, options ...cmdOption) *Command {
+	return cmdDetectorWithInit(parent, cr, cliText, shortdesc, longdesc, out, true, options...)
+}
+
+func cmdDetectorWithInit(parent *Command, cr CmdRunner, cliText, shortdesc string, longdesc string, out io.Writer, initCmd bool, options ...cmdOption) *Command {
+	cc := &cobra.Command{
+		Use:   cliText,
+		Short: shortdesc,
+		Long:  longdesc,
+	}
+
+	c := &Command{Command: cc}
+
+	if parent != nil {
+		parent.AddCommand(c)
+	}
+
+	for _, co := range options {
+		co(c)
+	}
+
+	// This must be defined after the options have been applied
+	// so that changes made by the options are accessible here.
+	c.Command.Run = func(cmd *cobra.Command, args []string) {
+		c, err := NewCmdConfig(
+			cmdNS(c),
+			&doctl.LiveConfig{},
+			out,
+			args,
+			initCmd,
+		)
+		checkErr(err)
+
+		err = cr(c)
+		checkErr(err)
+	}
+
+	if cols := c.fmtCols; cols != nil {
+		formatHelp := fmt.Sprintf("Columns for output in a comma-separated list. Possible values: `%s`.",
+			strings.Join(cols, "`"+", "+"`"))
+		AddStringFlag(c, doctl.ArgFormat, "", "", formatHelp)
+		AddBoolFlag(c, doctl.ArgNoHeader, "", false, "Return raw data with no headers")
+	}
+
+	return c
+
+}

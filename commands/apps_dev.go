@@ -119,7 +119,192 @@ func AppsDev() *Command {
 		"An optional registry name to tag built container images with.",
 	)
 
+	detect := CmdDetector(
+		cmd,
+		RunAppsDevDetect,
+		"detect",
+		"Detect the app components",
+		heredoc.Docf(`
+			[BETA] Detect app components locally.
+
+			  All command line flags as optional. You may specify flags to be applied to the current build
+			  or use the command %s to permanently configure default values.`,
+			"`doctl app dev config`",
+		),
+		Writer,
+		aliasOpt("d"),
+	)
+	detect.DisableFlagsInUseLine = true
+
+	// TODO : Add ArgEnvFile/ in-line args to pull remote Git repo.
 	return cmd
+}
+
+// RunAppsDevDetect builds an app component locally.
+func RunAppsDevDetect(c *CmdConfig) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	ws, err := appDevWorkspace(c)
+	if err != nil {
+		if errors.Is(err, workspace.ErrNoGitRepo) {
+			cwd, err := os.Getwd()
+			if err != nil {
+				return err
+			}
+			template.Print(heredoc.Doc(`
+				{{error (print crossmark " could not find git worktree.")}}
+
+				local detect must be run within git repositories. doctl was run in {{muted .}}
+				however this directory is not inside a git worktree.
+
+				make sure you run doctl in the correct app directory where your source code is located.
+			`), cwd)
+			return ErrExitSilently
+		}
+		return fmt.Errorf("preparing workspace: %w", err)
+	}
+
+	template.Print("{{muted pointerRight}} current app dev workspace: {{muted .}}{{nl}}", ws.Context())
+
+	cli, err := c.Doit.GetDockerEngineClient()
+	if err != nil {
+		return err
+	}
+
+	err = appDevPrepareDetectEnv(ctx, cli)
+	if err != nil {
+		_, isSnap := os.LookupEnv("SNAP")
+		if isSnap && errors.Is(err, fs.ErrPermission) {
+			template.Buffered(
+				textbox.New().Warning(),
+				`Using the doctl Snap? Grant doctl access to Docker by running {{highlight "sudo snap connect doctl:app-dev-detect docker:docker-daemon"}}`,
+				nil,
+			)
+		}
+
+		return fmt.Errorf("preparing build environment: %w", err)
+	}
+
+	if ws.Config.Timeout > 0 {
+		template.Render(text.Warning, `{{checkmark}} restricting maximum detect duration to {{highlight (duration .)}}{{nl}}`, ws.Config.Timeout)
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(ctx, ws.Config.Timeout)
+		defer cancel()
+	}
+
+	var (
+		wg        sync.WaitGroup
+		logWriter io.Writer
+
+		// userCanceled indicates whether the context was canceled by user request
+		userCanceled bool
+	)
+	if Interactive {
+		logPager, err := pager.New(
+			// pager.WithTitle(sbuildingComponentLine),
+			pager.WithTitleSpinner(true),
+		)
+		if err != nil {
+			return fmt.Errorf("creating log pager: %w", err)
+		}
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			defer cancel()
+			err := logPager.Start(ctx)
+			if err != nil {
+				if errors.Is(err, charm.ErrCanceled) {
+					userCanceled = true
+				} else {
+					fmt.Fprintf(os.Stderr, "pager error: %v\n", err)
+				}
+			}
+		}()
+		logWriter = logPager
+	} else {
+		logWriter = os.Stdout
+		// In interactive mode, the pager handles ctrl-c. Here, we handle it manually instead.
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		go func() {
+			for range c {
+				if userCanceled {
+					template.Print(
+						`{{nl}}{{error (print crossmark " forcing unclean exit")}}{{nl}}`,
+						nil,
+					)
+					os.Exit(1)
+				}
+
+				cancel()
+				userCanceled = true
+				template.Print(
+					`{{nl}}{{error (print crossmark " got ctrl-c, cancelling. hit ctrl-c again to force exit.")}}{{nl}}`,
+					nil,
+				)
+			}
+		}()
+	}
+
+	var res builder.DetectResponse
+	err = func() error {
+		defer cancel()
+		cwd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+
+		detector, err := c.detectorFactory.NewComponentDetector(cli, builder.NewDetectorOpts{
+			LogWriter:       logWriter,
+			CNBBuilderImage: builder.CNBBuilderImage_Heroku22,
+			ContextDir:      cwd,
+		})
+
+		if err != nil {
+			return err
+		}
+		res, err = detector.Detect(ctx)
+		if err != nil {
+			_, isSnap := os.LookupEnv("SNAP")
+			if isSnap && errors.Is(err, fs.ErrPermission) {
+				template.Buffered(
+					textbox.New().Warning().WithOutput(logWriter),
+					`Using the doctl Snap? Grant doctl access to Docker by running {{highlight "sudo snap connect doctl:app-dev-build docker:docker-daemon"}}`,
+					nil,
+				)
+			}
+
+			return err
+		}
+		return nil
+	}()
+	// allow the pager to exit cleanly
+	wg.Wait()
+
+	if err != nil {
+		if errors.Is(err, context.Canceled) && userCanceled {
+			return fmt.Errorf("canceled")
+		}
+
+		return err
+	} else if userCanceled {
+		return fmt.Errorf("canceled")
+	} else if res.ExitCode == 0 {
+		//TODO: print detected components
+		template.Print(`{{success checkmark}} detected components{{nl}}`, nil)
+
+	} else {
+		template.Buffered(
+			textbox.New().Error(),
+			`{{error crossmark}} build container exited with code {{error .code}} after`,
+			map[string]any{
+				"code": res.ExitCode,
+			},
+		)
+	}
+	fmt.Print("\n")
+	return nil
 }
 
 // RunAppsDevBuild builds an app component locally.
@@ -549,6 +734,30 @@ func appDevPrepareEnvironment(ctx context.Context, ws *workspace.AppDev, cli bui
 	// }
 	// builderImage.Labels["io.buildpacks.builder.metadata"]
 
+	return nil
+}
+
+// appDevPrepareDetectEnv pulls required cnb-local-builder image in preparation for a detect.
+func appDevPrepareDetectEnv(ctx context.Context, cli builder.DockerEngineClient) error {
+	template.Print("{{success checkmark}} preparing app dev detect environment{{nl}}", nil)
+	images := []string{builder.CNBBuilderImage_Heroku22}
+
+	// TODO: Check if we need to suport multiple images for local detection.
+	var toPull []string
+	for _, ref := range images {
+		exists, err := builder.ImageExists(ctx, cli, ref)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			toPull = append(toPull, ref)
+		}
+	}
+
+	err := pullDockerImages(ctx, cli, toPull)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

@@ -36,6 +36,7 @@ type CmdConfig struct {
 	setContextAccessToken   func(string)
 	removeContext           func(string) error
 	componentBuilderFactory builder.ComponentBuilderFactory
+	detectorFactory         builder.DetectorFactory
 
 	// services
 	Keys              func() do.KeysService
@@ -188,6 +189,8 @@ func NewCmdConfig(ns string, dc doctl.Config, out io.Writer, args []string, init
 		},
 
 		componentBuilderFactory: &builder.DefaultComponentBuilderFactory{},
+
+		detectorFactory: &builder.DefaultComponentDetectorFactory{},
 	}
 
 	if initGodo {
