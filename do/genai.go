@@ -162,7 +162,7 @@ func NewGenAIService(client *godo.Client) GenAIService {
 // List lists all agents.
 func (a *genAIService) ListAgents() (Agents, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListAgents(context.TODO(), opt)
+		list, resp, err := a.client.GradientAI.ListAgents(context.TODO(), opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -189,7 +189,7 @@ func (a *genAIService) ListAgents() (Agents, error) {
 
 // Create creates a new agent.
 func (a *genAIService) CreateAgent(req *godo.AgentCreateRequest) (*Agent, error) {
-	agent, _, err := a.client.GenAI.CreateAgent(context.TODO(), req)
+	agent, _, err := a.client.GradientAI.CreateAgent(context.TODO(), req)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ func (a *genAIService) CreateAgent(req *godo.AgentCreateRequest) (*Agent, error)
 
 // Get retrieves an agent by ID.
 func (a *genAIService) GetAgent(agentID string) (*Agent, error) {
-	agent, _, err := a.client.GenAI.GetAgent(context.TODO(), agentID)
+	agent, _, err := a.client.GradientAI.GetAgent(context.TODO(), agentID)
 	if err != nil {
 		return nil, err
 	}
@@ -207,7 +207,7 @@ func (a *genAIService) GetAgent(agentID string) (*Agent, error) {
 
 // Update updates an agent by ID.
 func (a *genAIService) UpdateAgent(agentID string, req *godo.AgentUpdateRequest) (*Agent, error) {
-	agent, _, err := a.client.GenAI.UpdateAgent(context.TODO(), agentID, req)
+	agent, _, err := a.client.GradientAI.UpdateAgent(context.TODO(), agentID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -215,13 +215,13 @@ func (a *genAIService) UpdateAgent(agentID string, req *godo.AgentUpdateRequest)
 }
 
 func (a *genAIService) DeleteAgent(agentID string) error {
-	_, _, err := a.client.GenAI.DeleteAgent(context.TODO(), agentID)
+	_, _, err := a.client.GradientAI.DeleteAgent(context.TODO(), agentID)
 	return err
 }
 
 // UpdateVisibility updates the visibility of an agent by ID.
 func (a *genAIService) UpdateAgentVisibility(agentID string, req *godo.AgentVisibilityUpdateRequest) (*Agent, error) {
-	agent, _, err := a.client.GenAI.UpdateAgentVisibility(context.TODO(), agentID, req)
+	agent, _, err := a.client.GradientAI.UpdateAgentVisibility(context.TODO(), agentID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -231,7 +231,7 @@ func (a *genAIService) UpdateAgentVisibility(agentID string, req *godo.AgentVisi
 // ListKnowledgeBases lists all knowledge bases for an agent.
 func (a *genAIService) ListKnowledgeBases() (KnowledgeBases, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListKnowledgeBases(context.TODO(), opt)
+		list, resp, err := a.client.GradientAI.ListKnowledgeBases(context.TODO(), opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -257,7 +257,7 @@ func (a *genAIService) ListKnowledgeBases() (KnowledgeBases, error) {
 }
 
 func (a *genAIService) GetKnowledgeBase(knowledgeBaseID string) (*KnowledgeBase, error) {
-	kb, _, _, err := a.client.GenAI.GetKnowledgeBase(context.TODO(), knowledgeBaseID)
+	kb, _, _, err := a.client.GradientAI.GetKnowledgeBase(context.TODO(), knowledgeBaseID)
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +266,7 @@ func (a *genAIService) GetKnowledgeBase(knowledgeBaseID string) (*KnowledgeBase,
 
 func (a *genAIService) ListKnowledgeBaseDataSources(knowledgeBaseID string) (KnowledgeBaseDataSources, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListKnowledgeBaseDataSources(context.TODO(), knowledgeBaseID, opt)
+		list, resp, err := a.client.GradientAI.ListKnowledgeBaseDataSources(context.TODO(), knowledgeBaseID, opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -292,7 +292,7 @@ func (a *genAIService) ListKnowledgeBaseDataSources(knowledgeBaseID string) (Kno
 }
 
 func (a *genAIService) CreateKnowledgeBase(req *godo.KnowledgeBaseCreateRequest) (*KnowledgeBase, error) {
-	kb, _, err := a.client.GenAI.CreateKnowledgeBase(context.TODO(), req)
+	kb, _, err := a.client.GradientAI.CreateKnowledgeBase(context.TODO(), req)
 	if err != nil {
 		return nil, err
 	}
@@ -300,7 +300,7 @@ func (a *genAIService) CreateKnowledgeBase(req *godo.KnowledgeBaseCreateRequest)
 }
 
 func (a *genAIService) UpdateKnowledgeBase(knowledgeBaseID string, req *godo.UpdateKnowledgeBaseRequest) (*KnowledgeBase, error) {
-	kb, _, err := a.client.GenAI.UpdateKnowledgeBase(context.TODO(), knowledgeBaseID, req)
+	kb, _, err := a.client.GradientAI.UpdateKnowledgeBase(context.TODO(), knowledgeBaseID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +308,7 @@ func (a *genAIService) UpdateKnowledgeBase(knowledgeBaseID string, req *godo.Upd
 }
 
 func (a *genAIService) AddKnowledgeBaseDataSource(knowledgeBaseID string, req *godo.AddKnowledgeBaseDataSourceRequest) (*KnowledgeBaseDataSource, error) {
-	kb, _, err := a.client.GenAI.AddKnowledgeBaseDataSource(context.TODO(), knowledgeBaseID, req)
+	kb, _, err := a.client.GradientAI.AddKnowledgeBaseDataSource(context.TODO(), knowledgeBaseID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -316,17 +316,17 @@ func (a *genAIService) AddKnowledgeBaseDataSource(knowledgeBaseID string, req *g
 }
 
 func (a *genAIService) DeleteKnowledgeBaseDataSource(knowledgeBaseID string, dataSourceID string) error {
-	_, _, _, err := a.client.GenAI.DeleteKnowledgeBaseDataSource(context.TODO(), knowledgeBaseID, dataSourceID)
+	_, _, _, err := a.client.GradientAI.DeleteKnowledgeBaseDataSource(context.TODO(), knowledgeBaseID, dataSourceID)
 	return err
 }
 
 func (a *genAIService) DeleteKnowledgeBase(knowledgeBaseID string) error {
-	_, _, err := a.client.GenAI.DeleteKnowledgeBase(context.TODO(), knowledgeBaseID)
+	_, _, err := a.client.GradientAI.DeleteKnowledgeBase(context.TODO(), knowledgeBaseID)
 	return err
 }
 
 func (a *genAIService) AttachKnowledgeBaseToAgent(agentId string, knowledgeBaseID string) (*Agent, error) {
-	agent, _, err := a.client.GenAI.AttachKnowledgeBaseToAgent(context.TODO(), agentId, knowledgeBaseID)
+	agent, _, err := a.client.GradientAI.AttachKnowledgeBaseToAgent(context.TODO(), agentId, knowledgeBaseID)
 	if err != nil {
 		return &Agent{}, err
 	}
@@ -334,7 +334,7 @@ func (a *genAIService) AttachKnowledgeBaseToAgent(agentId string, knowledgeBaseI
 }
 
 func (a *genAIService) DetachKnowledgeBaseToAgent(agentId string, knowledgeBaseID string) (*Agent, error) {
-	agent, _, err := a.client.GenAI.DetachKnowledgeBaseToAgent(context.TODO(), agentId, knowledgeBaseID)
+	agent, _, err := a.client.GradientAI.DetachKnowledgeBaseToAgent(context.TODO(), agentId, knowledgeBaseID)
 	if err != nil {
 		return &Agent{}, err
 	}
@@ -348,7 +348,7 @@ func (a *genAIService) AddAgentRoute(parentAgentID string, childAgentID string) 
 		ChildAgentUuid:  childAgentID,
 	}
 
-	routeResponse, _, err := a.client.GenAI.AddAgentRoute(context.TODO(), parentAgentID, childAgentID, req)
+	routeResponse, _, err := a.client.GradientAI.AddAgentRoute(context.TODO(), parentAgentID, childAgentID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -356,7 +356,7 @@ func (a *genAIService) AddAgentRoute(parentAgentID string, childAgentID string) 
 }
 
 func (a *genAIService) UpdateAgentRoute(parentAgentID string, childAgentID string, req *godo.AgentRouteUpdateRequest) (*AgentRouteResponse, error) {
-	routeResponse, _, err := a.client.GenAI.UpdateAgentRoute(context.TODO(), parentAgentID, childAgentID, req)
+	routeResponse, _, err := a.client.GradientAI.UpdateAgentRoute(context.TODO(), parentAgentID, childAgentID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -364,13 +364,13 @@ func (a *genAIService) UpdateAgentRoute(parentAgentID string, childAgentID strin
 }
 
 func (a *genAIService) DeleteAgentRoute(parentAgentID string, childAgentID string) error {
-	_, _, err := a.client.GenAI.DeleteAgentRoute(context.TODO(), parentAgentID, childAgentID)
+	_, _, err := a.client.GradientAI.DeleteAgentRoute(context.TODO(), parentAgentID, childAgentID)
 	return err
 }
 
 // CreateFunctionRoute creates a new function route for the specified agent
 func (s *genAIService) CreateFunctionRoute(id string, cr *godo.FunctionRouteCreateRequest) (*Agent, error) {
-	agent, _, err := s.client.GenAI.CreateFunctionRoute(context.TODO(), id, cr)
+	agent, _, err := s.client.GradientAI.CreateFunctionRoute(context.TODO(), id, cr)
 	if err != nil {
 		return nil, err
 	}
@@ -379,7 +379,7 @@ func (s *genAIService) CreateFunctionRoute(id string, cr *godo.FunctionRouteCrea
 
 // DeleteFunctionRoute deletes a function route for the specified agent
 func (s *genAIService) DeleteFunctionRoute(agent_id string, function_id string) (*Agent, error) {
-	agent, _, err := s.client.GenAI.DeleteFunctionRoute(context.TODO(), agent_id, function_id)
+	agent, _, err := s.client.GradientAI.DeleteFunctionRoute(context.TODO(), agent_id, function_id)
 	if err != nil {
 		return nil, err
 	}
@@ -388,7 +388,7 @@ func (s *genAIService) DeleteFunctionRoute(agent_id string, function_id string) 
 
 // Update FunctionRoute updates a function route for the specified agent
 func (s *genAIService) UpdateFunctionRoute(agent_id string, function_id string, cr *godo.FunctionRouteUpdateRequest) (*Agent, error) {
-	agent, _, err := s.client.GenAI.UpdateFunctionRoute(context.TODO(), agent_id, function_id, cr)
+	agent, _, err := s.client.GradientAI.UpdateFunctionRoute(context.TODO(), agent_id, function_id, cr)
 	if err != nil {
 		return nil, err
 	}
@@ -397,7 +397,7 @@ func (s *genAIService) UpdateFunctionRoute(agent_id string, function_id string, 
 
 // CreateAgentAPIKey implements GenAIService.
 func (a *genAIService) CreateAgentAPIKey(agentID string, req *godo.AgentAPIKeyCreateRequest) (*ApiKeyInfo, error) {
-	apikeyInfo, _, err := a.client.GenAI.CreateAgentAPIKey(context.TODO(), agentID, req)
+	apikeyInfo, _, err := a.client.GradientAI.CreateAgentAPIKey(context.TODO(), agentID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -406,14 +406,14 @@ func (a *genAIService) CreateAgentAPIKey(agentID string, req *godo.AgentAPIKeyCr
 
 // DeleteAgentAPIKey implements GenAIService.
 func (a *genAIService) DeleteAgentAPIKey(agentID string, apikeyID string) error {
-	_, _, err := a.client.GenAI.DeleteAgentAPIKey(context.TODO(), agentID, apikeyID)
+	_, _, err := a.client.GradientAI.DeleteAgentAPIKey(context.TODO(), agentID, apikeyID)
 	return err
 }
 
 // ListAgentAPIKeys implements GenAIService.
 func (a *genAIService) ListAgentAPIKeys(agentId string) (ApiKeys, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListAgentAPIKeys(context.TODO(), agentId, opt)
+		list, resp, err := a.client.GradientAI.ListAgentAPIKeys(context.TODO(), agentId, opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -454,7 +454,7 @@ func (a *genAIService) ListAgentAPIKeys(agentId string) (ApiKeys, error) {
 
 // RegenerateAgentAPIKey implements GenAIService.
 func (a *genAIService) RegenerateAgentAPIKey(agentID string, apikeyID string) (*ApiKeyInfo, error) {
-	apikeyInfo, _, err := a.client.GenAI.RegenerateAgentAPIKey(context.TODO(), agentID, apikeyID)
+	apikeyInfo, _, err := a.client.GradientAI.RegenerateAgentAPIKey(context.TODO(), agentID, apikeyID)
 	if err != nil {
 		return nil, err
 	}
@@ -463,7 +463,7 @@ func (a *genAIService) RegenerateAgentAPIKey(agentID string, apikeyID string) (*
 
 // UpdateAgentAPIKey implements GenAIService.
 func (a *genAIService) UpdateAgentAPIKey(agentID string, apikeyID string, req *godo.AgentAPIKeyUpdateRequest) (*ApiKeyInfo, error) {
-	apikeyInfo, _, err := a.client.GenAI.UpdateAgentAPIKey(context.TODO(), agentID, apikeyID, req)
+	apikeyInfo, _, err := a.client.GradientAI.UpdateAgentAPIKey(context.TODO(), agentID, apikeyID, req)
 	if err != nil {
 		return nil, err
 	}
@@ -472,7 +472,7 @@ func (a *genAIService) UpdateAgentAPIKey(agentID string, apikeyID string, req *g
 
 func (a *genAIService) ListAgentVersions(agentID string) (AgentVersions, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListAgentVersions(context.TODO(), agentID, opt)
+		list, resp, err := a.client.GradientAI.ListAgentVersions(context.TODO(), agentID, opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -500,7 +500,7 @@ func (a *genAIService) ListAgentVersions(agentID string) (AgentVersions, error) 
 
 func (a *genAIService) ListOpenAIAPIKeys() (OpenAiApiKeys, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListOpenAIAPIKeys(context.TODO(), opt)
+		list, resp, err := a.client.GradientAI.ListOpenAIAPIKeys(context.TODO(), opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -526,7 +526,7 @@ func (a *genAIService) ListOpenAIAPIKeys() (OpenAiApiKeys, error) {
 }
 
 func (a *genAIService) CreateOpenAIAPIKey(openaiAPIKeyCreate *godo.OpenAIAPIKeyCreateRequest) (*OpenAiApiKey, error) {
-	openaiApiKey, _, err := a.client.GenAI.CreateOpenAIAPIKey(context.TODO(), openaiAPIKeyCreate)
+	openaiApiKey, _, err := a.client.GradientAI.CreateOpenAIAPIKey(context.TODO(), openaiAPIKeyCreate)
 	if err != nil {
 		return nil, err
 	}
@@ -534,7 +534,7 @@ func (a *genAIService) CreateOpenAIAPIKey(openaiAPIKeyCreate *godo.OpenAIAPIKeyC
 }
 
 func (a *genAIService) GetOpenAIAPIKey(openaiApiKeyId string) (*OpenAiApiKey, error) {
-	openaiApiKey, _, err := a.client.GenAI.GetOpenAIAPIKey(context.TODO(), openaiApiKeyId)
+	openaiApiKey, _, err := a.client.GradientAI.GetOpenAIAPIKey(context.TODO(), openaiApiKeyId)
 	if err != nil {
 		return nil, err
 	}
@@ -542,7 +542,7 @@ func (a *genAIService) GetOpenAIAPIKey(openaiApiKeyId string) (*OpenAiApiKey, er
 }
 
 func (a *genAIService) UpdateOpenAIAPIKey(openaiApiKeyId string, openaiAPIKeyUpdate *godo.OpenAIAPIKeyUpdateRequest) (*OpenAiApiKey, error) {
-	openaiApiKey, _, err := a.client.GenAI.UpdateOpenAIAPIKey(context.TODO(), openaiApiKeyId, openaiAPIKeyUpdate)
+	openaiApiKey, _, err := a.client.GradientAI.UpdateOpenAIAPIKey(context.TODO(), openaiApiKeyId, openaiAPIKeyUpdate)
 	if err != nil {
 		return nil, err
 	}
@@ -550,7 +550,7 @@ func (a *genAIService) UpdateOpenAIAPIKey(openaiApiKeyId string, openaiAPIKeyUpd
 }
 
 func (a *genAIService) DeleteOpenAIAPIKey(openaiApiKeyId string) (*OpenAiApiKey, error) {
-	openaiApiKey, _, err := a.client.GenAI.DeleteOpenAIAPIKey(context.TODO(), openaiApiKeyId)
+	openaiApiKey, _, err := a.client.GradientAI.DeleteOpenAIAPIKey(context.TODO(), openaiApiKeyId)
 	if err != nil {
 		return nil, err
 	}
@@ -559,7 +559,7 @@ func (a *genAIService) DeleteOpenAIAPIKey(openaiApiKeyId string) (*OpenAiApiKey,
 
 func (a *genAIService) ListAgentsByOpenAIAPIKey(openaiApiKeyId string) (Agents, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		agents, resp, err := a.client.GenAI.ListAgentsByOpenAIAPIKey(context.TODO(), openaiApiKeyId, opt)
+		agents, resp, err := a.client.GradientAI.ListAgentsByOpenAIAPIKey(context.TODO(), openaiApiKeyId, opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -596,7 +596,7 @@ func (a *genAIService) ListAgentsByOpenAIAPIKey(openaiApiKeyId string) (Agents, 
 
 func (a *genAIService) ListDatacenterRegions(servesInference, servesBatch *bool) (DatacenterRegions, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListDatacenterRegions(context.TODO(), servesInference, servesBatch)
+		list, resp, err := a.client.GradientAI.ListDatacenterRegions(context.TODO(), servesInference, servesBatch)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -623,7 +623,7 @@ func (a *genAIService) ListDatacenterRegions(servesInference, servesBatch *bool)
 
 func (a *genAIService) ListAvailableModels() (Models, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		list, resp, err := a.client.GenAI.ListAvailableModels(context.TODO(), opt)
+		list, resp, err := a.client.GradientAI.ListAvailableModels(context.TODO(), opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -651,7 +651,7 @@ func (a *genAIService) ListAvailableModels() (Models, error) {
 // ListIndexingJobs lists all indexing jobs for knowledge bases.
 func (a *genAIService) ListIndexingJobs() (IndexingJobs, error) {
 	f := func(opt *godo.ListOptions) ([]any, *godo.Response, error) {
-		resp, godoResp, err := a.client.GenAI.ListIndexingJobs(context.TODO(), opt)
+		resp, godoResp, err := a.client.GradientAI.ListIndexingJobs(context.TODO(), opt)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -678,7 +678,7 @@ func (a *genAIService) ListIndexingJobs() (IndexingJobs, error) {
 
 // GetIndexingJob retrieves the status of a specific indexing job.
 func (a *genAIService) GetIndexingJob(indexingJobID string) (*IndexingJob, error) {
-	resp, _, err := a.client.GenAI.GetIndexingJob(context.TODO(), indexingJobID)
+	resp, _, err := a.client.GradientAI.GetIndexingJob(context.TODO(), indexingJobID)
 	if err != nil {
 		return nil, err
 	}
@@ -687,7 +687,7 @@ func (a *genAIService) GetIndexingJob(indexingJobID string) (*IndexingJob, error
 
 // CancelIndexingJob cancels a specific indexing job.
 func (a *genAIService) CancelIndexingJob(indexingJobID string) (*IndexingJob, error) {
-	resp, _, err := a.client.GenAI.CancelIndexingJob(context.TODO(), indexingJobID)
+	resp, _, err := a.client.GradientAI.CancelIndexingJob(context.TODO(), indexingJobID)
 	if err != nil {
 		return nil, err
 	}
@@ -696,7 +696,7 @@ func (a *genAIService) CancelIndexingJob(indexingJobID string) (*IndexingJob, er
 
 // ListIndexingJobDataSources lists all data sources for a specific indexing job.
 func (a *genAIService) ListIndexingJobDataSources(indexingJobID string) (IndexingJobDataSources, error) {
-	resp, _, err := a.client.GenAI.ListIndexingJobDataSources(context.TODO(), indexingJobID)
+	resp, _, err := a.client.GradientAI.ListIndexingJobDataSources(context.TODO(), indexingJobID)
 	if err != nil {
 		return nil, err
 	}
