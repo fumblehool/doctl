@@ -1128,7 +1128,7 @@ func TestRunAppsListJobInvocations(t *testing.T) {
 
 		config.Args = append(config.Args, appID)
 		config.Doit.Set(config.NS, doctl.ArgAppDeployment, jobInvocations[0].DeploymentID)
-		config.Doit.Set(config.NS, doctl.ArgAppJobName, jobInvocations[0].JobName)
+		config.Doit.Set(config.NS, doctl.ArgAppJobName, []string{jobInvocations[0].JobName})
 
 		err := RunAppsListJobInvocations(config)
 		require.NoError(t, err)

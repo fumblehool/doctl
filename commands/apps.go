@@ -201,8 +201,8 @@ Only basic information is included with the text output format. For complete app
 		displayerType(&displayers.JobInvocations{}),
 	)
 
-	AddStringSliceFlag(listJobInvocations, doctl.ArgAppDeployment, "", []string{}, "The deployment ID to filter job invocations for. If not provided, all job invocations for given app are returned.")
-	AddStringSliceFlag(listJobInvocations, doctl.ArgAppJobName, "", []string{}, "The job name to filter job invocations for. If not provided, all job invocations for given app are returned.")
+	AddStringFlag(listJobInvocations, doctl.ArgAppDeployment, "", "", "The deployment ID to filter job invocations for. If not provided, all job invocations for given app are returned.")
+	AddStringSliceFlag(listJobInvocations, doctl.ArgAppJobName, "", []string{}, "The job component names to filter job invocations for. If not provided, all job invocations for given app are returned.")
 
 	listJobInvocations.Example = `The following example retrieves the list of job invocations for the app with the ID ` + "`" + `f81d4fae-7dec-11d0-a765-00a0c91e6bf6` + "`" + ` and the deployment ID ` + "`" + `418b7972-fc67-41ea-ab4b-6f9477c4f7d8` + "`" + ` and the job ` + "`" + `cron` + "`" + `: doctl apps list-job-invocations f81d4fae-7dec-11d0-a765-00a0c91e6bf6 --job-name cron --deployment 418b7972-fc67-41ea-ab4b-6f9477c4f7d8`
 
@@ -1471,14 +1471,14 @@ func RunAppsListJobInvocations(c *CmdConfig) error {
 		return err
 	}
 
-	jobName, err := c.Doit.GetString(c.NS, doctl.ArgAppJobName)
+	jobNames, err := c.Doit.GetStringSlice(c.NS, doctl.ArgAppJobName)
 	if err != nil {
 		return err
 	}
 
 	opts := &godo.ListJobInvocationsOptions{
 		DeploymentID: deploymentID,
-		JobNames:     []string{jobName},
+		JobNames:     jobNames,
 	}
 
 	invocations, err := c.Apps().ListJobInvocations(appID, opts)
