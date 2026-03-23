@@ -1135,6 +1135,30 @@ func TestRunAppsListJobInvocations(t *testing.T) {
 	})
 }
 
+func TestRunAppsListJobInvocationsNoFilters(t *testing.T) {
+	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
+		appID := uuid.New().String()
+		jobInvocations := []*godo.JobInvocation{{
+			ID:           uuid.New().String(),
+			JobName:      "job-name",
+			DeploymentID: uuid.New().String(),
+			Phase:        godo.JOBINVOCATIONPHASE_Succeeded,
+			CreatedAt:    time.Now(),
+			StartedAt:    time.Now(),
+			CompletedAt:  time.Now(),
+		}}
+
+		opts := &godo.ListJobInvocationsOptions{}
+
+		tm.apps.EXPECT().ListJobInvocations(appID, opts).Times(1).Return(jobInvocations, nil)
+
+		config.Args = append(config.Args, appID)
+
+		err := RunAppsListJobInvocations(config)
+		require.NoError(t, err)
+	})
+}
+
 func TestRunAppsGetJobInvocation(t *testing.T) {
 	withTestClient(t, func(config *CmdConfig, tm *tcMocks) {
 		appID := uuid.New().String()

@@ -1476,9 +1476,12 @@ func RunAppsListJobInvocations(c *CmdConfig) error {
 		return err
 	}
 
-	opts := &godo.ListJobInvocationsOptions{
-		DeploymentID: deploymentID,
-		JobNames:     jobNames,
+	opts := &godo.ListJobInvocationsOptions{}
+	if deploymentID != "" {
+		opts.DeploymentID = deploymentID
+	}
+	if len(jobNames) > 0 {
+		opts.JobNames = jobNames
 	}
 
 	invocations, err := c.Apps().ListJobInvocations(appID, opts)
